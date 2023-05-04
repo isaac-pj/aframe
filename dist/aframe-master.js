@@ -23,9 +23,7 @@ return /******/ (() => { // webpackBootstrap
 
   var attributesObserver = function (whenDefined, MutationObserver) {
     var attributeChanged = function attributeChanged(records) {
-      for (var i = 0, length = records.length; i < length; i++) {
-        dispatch(records[i]);
-      }
+      for (var i = 0, length = records.length; i < length; i++) dispatch(records[i]);
     };
     var dispatch = function dispatch(_ref) {
       var target = _ref.target,
@@ -208,9 +206,7 @@ return /******/ (() => { // webpackBootstrap
   var qsaObserver = function (options) {
     var live = new WeakMap$1();
     var drop = function drop(elements) {
-      for (var i = 0, length = elements.length; i < length; i++) {
-        live["delete"](elements[i]);
-      }
+      for (var i = 0, length = elements.length; i < length; i++) live["delete"](elements[i]);
     };
     var flush = function flush() {
       var records = observer.takeRecords();
@@ -245,9 +241,7 @@ return /******/ (() => { // webpackBootstrap
     };
     var parse = function parse(elements) {
       var connected = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-      for (var i = 0, length = elements.length; i < length; i++) {
-        notifier(elements[i], connected);
-      }
+      for (var i = 0, length = elements.length; i < length; i++) notifier(elements[i], connected);
     };
     var query = options.query;
     var root = options.root || document$2;
@@ -293,9 +287,7 @@ return /******/ (() => { // webpackBootstrap
       delete element[key[i]];
     }
     return function () {
-      for (var _i = 0; _i < length; _i++) {
-        element[key[_i]] = value[_i];
-      }
+      for (var _i = 0; _i < length; _i++) element[key[_i]] = value[_i];
     };
   };
   if (legacy) {
@@ -348,41 +340,32 @@ return /******/ (() => { // webpackBootstrap
       return defined.get(name).$;
     };
     var augment = attributesObserver(whenDefined, MutationObserver$1);
-    defineProperty(self, 'customElements', {
-      configurable: true,
-      value: {
-        define: function define(is, Class) {
-          if (registry.has(is)) throw new Error("the name \"".concat(is, "\" has already been used with this registry"));
-          classes.set(Class, is);
-          prototypes.set(is, Class.prototype);
-          registry.set(is, Class);
-          query.push(is);
-          whenDefined(is).then(function () {
-            parse(document$1.querySelectorAll(is));
-          });
-          defined.get(is)._(Class);
-        },
-        get: function get(is) {
-          return registry.get(is);
-        },
-        whenDefined: whenDefined
-      }
-    });
+    self.customElements = {
+      define: function define(is, Class) {
+        if (registry.has(is)) throw new Error("the name \"".concat(is, "\" has already been used with this registry"));
+        classes.set(Class, is);
+        prototypes.set(is, Class.prototype);
+        registry.set(is, Class);
+        query.push(is);
+        whenDefined(is).then(function () {
+          parse(document$1.querySelectorAll(is));
+        });
+        defined.get(is)._(Class);
+      },
+      get: function get(is) {
+        return registry.get(is);
+      },
+      whenDefined: whenDefined
+    };
     defineProperty(HTMLBuiltIn.prototype = HTMLElement.prototype, 'constructor', {
       value: HTMLBuiltIn
     });
-    defineProperty(self, 'HTMLElement', {
-      configurable: true,
-      value: HTMLBuiltIn
-    });
-    defineProperty(document$1, 'createElement', {
-      configurable: true,
-      value: function value(name, options) {
-        var is = options && options.is;
-        var Class = is ? registry.get(is) : registry.get(name);
-        return Class ? new Class() : createElement.call(document$1, name);
-      }
-    });
+    self.HTMLElement = HTMLBuiltIn;
+    document$1.createElement = function (name, options) {
+      var is = options && options.is;
+      var Class = is ? registry.get(is) : registry.get(name);
+      return Class ? new Class() : createElement.call(document$1, name);
+    };
     // in case ShadowDOM is used through a polyfill, to avoid issues
     // with builtin extends within shadow roots
     if (!('isConnected' in Node.prototype)) defineProperty(Node.prototype, 'isConnected', {
@@ -409,20 +392,17 @@ return /******/ (() => { // webpackBootstrap
         var _self$customElements = self.customElements,
           get = _self$customElements.get,
           _whenDefined = _self$customElements.whenDefined;
-        defineProperty(self.customElements, 'whenDefined', {
-          configurable: true,
-          value: function value(is) {
-            var _this = this;
-            return _whenDefined.call(this, is).then(function (Class) {
-              return Class || get.call(_this, is);
-            });
-          }
-        });
+        self.customElements.whenDefined = function (is) {
+          var _this = this;
+          return _whenDefined.call(this, is).then(function (Class) {
+            return Class || get.call(_this, is);
+          });
+        };
       } catch (o_O) {}
     }
   }
   if (legacy) {
-    var parseShadow = function parseShadow(element) {
+    var _parseShadow = function _parseShadow(element) {
       var root = shadowRoots.get(element);
       _parse(root.querySelectorAll(this), element.isConnected);
     };
@@ -473,7 +453,7 @@ return /******/ (() => { // webpackBootstrap
         handle: function handle(element, connected) {
           if (shadowRoots.has(element)) {
             if (connected) shadows.add(element);else shadows["delete"](element);
-            if (_query.length) parseShadow.call(_query, element);
+            if (_query.length) _parseShadow.call(_query, element);
           }
         }
       }),
@@ -525,75 +505,60 @@ return /******/ (() => { // webpackBootstrap
         value: HTMLBuiltIn
       });
     });
-    defineProperty(document$1, 'createElement', {
-      configurable: true,
-      value: function value(name, options) {
-        var is = options && options.is;
-        if (is) {
-          var Class = _registry.get(is);
-          if (Class && _classes.get(Class).tag === name) return new Class();
-        }
-        var element = _createElement.call(document$1, name);
-        if (is) element.setAttribute('is', is);
-        return element;
+    document$1.createElement = function (name, options) {
+      var is = options && options.is;
+      if (is) {
+        var Class = _registry.get(is);
+        if (Class && _classes.get(Class).tag === name) return new Class();
       }
-    });
-    defineProperty(customElements, 'get', {
-      configurable: true,
-      value: getCE
-    });
-    defineProperty(customElements, 'whenDefined', {
-      configurable: true,
-      value: _whenDefined2
-    });
-    defineProperty(customElements, 'upgrade', {
-      configurable: true,
-      value: function value(element) {
-        var is = element.getAttribute('is');
-        if (is) {
-          var _constructor = _registry.get(is);
-          if (_constructor) {
-            _augment(setPrototypeOf(element, _constructor.prototype), is);
-            // apparently unnecessary because this is handled by qsa observer
-            // if (element.isConnected && element.connectedCallback)
-            //   element.connectedCallback();
-            return;
-          }
+      var element = _createElement.call(document$1, name);
+      if (is) element.setAttribute('is', is);
+      return element;
+    };
+    customElements.get = getCE;
+    customElements.whenDefined = _whenDefined2;
+    customElements.upgrade = function (element) {
+      var is = element.getAttribute('is');
+      if (is) {
+        var _constructor = _registry.get(is);
+        if (_constructor) {
+          _augment(setPrototypeOf(element, _constructor.prototype), is);
+          // apparently unnecessary because this is handled by qsa observer
+          // if (element.isConnected && element.connectedCallback)
+          //   element.connectedCallback();
+          return;
         }
-        upgrade.call(customElements, element);
       }
-    });
-    defineProperty(customElements, 'define', {
-      configurable: true,
-      value: function value(is, Class, options) {
-        if (getCE(is)) throw new Error("'".concat(is, "' has already been defined as a custom element"));
-        var selector;
-        var tag = options && options["extends"];
-        _classes.set(Class, tag ? {
-          is: is,
-          tag: tag
-        } : {
-          is: '',
-          tag: is
-        });
+      upgrade.call(customElements, element);
+    };
+    customElements.define = function (is, Class, options) {
+      if (getCE(is)) throw new Error("'".concat(is, "' has already been defined as a custom element"));
+      var selector;
+      var tag = options && options["extends"];
+      _classes.set(Class, tag ? {
+        is: is,
+        tag: tag
+      } : {
+        is: '',
+        tag: is
+      });
+      if (tag) {
+        selector = "".concat(tag, "[is=\"").concat(is, "\"]");
+        _prototypes.set(selector, Class.prototype);
+        _registry.set(is, Class);
+        _query.push(selector);
+      } else {
+        define.apply(customElements, arguments);
+        shadowed.push(selector = is);
+      }
+      _whenDefined2(is).then(function () {
         if (tag) {
-          selector = "".concat(tag, "[is=\"").concat(is, "\"]");
-          _prototypes.set(selector, Class.prototype);
-          _registry.set(is, Class);
-          _query.push(selector);
-        } else {
-          define.apply(customElements, arguments);
-          shadowed.push(selector = is);
-        }
-        _whenDefined2(is).then(function () {
-          if (tag) {
-            _parse(document$1.querySelectorAll(selector));
-            shadows.forEach(parseShadow, [selector]);
-          } else parseShadowed(document$1.querySelectorAll(selector));
-        });
-        _defined.get(is)._(Class);
-      }
-    });
+          _parse(document$1.querySelectorAll(selector));
+          shadows.forEach(_parseShadow, [selector]);
+        } else parseShadowed(document$1.querySelectorAll(selector));
+      });
+      _defined.get(is)._(Class);
+    };
   }
 })();
 
@@ -21760,7 +21725,7 @@ module.exports.Component = registerComponent('text', {
 
     // Position and scale mesh to apply layout.
     mesh.position.x = x * textScale + data.xOffset;
-    mesh.position.y = y * textScale;
+    mesh.position.y = y * textScale + data.yOffset;
     // Place text slightly in front to avoid Z-fighting.
     mesh.position.z = data.zOffset;
     mesh.scale.set(textScale, -1 * textScale, textScale);
@@ -45528,7 +45493,7 @@ class WorkerPool {
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"aframe","version":"1.4.2","description":"A web framework for building virtual reality experiences.","homepage":"https://aframe.io/","main":"dist/aframe-master.js","scripts":{"dev":"cross-env INSPECTOR_VERSION=dev webpack serve --port 8080","dist":"node scripts/updateVersionLog.js && npm run dist:min && npm run dist:max","dist:max":"webpack --config webpack.config.js","dist:min":"webpack --config webpack.prod.config.js","docs":"markserv --dir docs --port 9001","preghpages":"node ./scripts/preghpages.js","ghpages":"ghpages -p gh-pages/","lint":"semistandard -v | snazzy","lint:fix":"semistandard --fix","precommit":"npm run lint","prepush":"node scripts/testOnlyCheck.js","prerelease":"node scripts/release.js 1.4.1 1.4.2","start":"npm run dev","start:https":"npm run dev -- --server-type https","test":"karma start ./tests/karma.conf.js","test:docs":"node scripts/docsLint.js","test:firefox":"npm test -- --browsers Firefox","test:chrome":"npm test -- --browsers Chrome","test:nobrowser":"NO_BROWSER=true npm test","test:node":"mocha --ui tdd tests/node"},"repository":"aframevr/aframe","license":"MIT","files":["dist/*","docs/**/*","src/**/*","vendor/**/*"],"dependencies":{"buffer":"^6.0.3","custom-event-polyfill":"^1.0.6","debug":"ngokevin/debug#noTimestamp","deep-assign":"^2.0.0","@ungap/custom-elements":"^1.1.0","load-bmfont":"^1.2.3","object-assign":"^4.0.1","present":"0.0.6","promise-polyfill":"^3.1.0","super-animejs":"^3.1.0","super-three":"^0.147.1","three-bmfont-text":"dmarcos/three-bmfont-text#21d017046216e318362c48abd1a48bddfb6e0733","webvr-polyfill":"^0.10.12"},"devDependencies":{"@babel/core":"^7.17.10","babel-loader":"^8.2.5","babel-plugin-istanbul":"^6.1.1","chai":"^4.3.6","chai-shallow-deep-equal":"^1.4.0","chalk":"^1.1.3","cross-env":"^7.0.3","css-loader":"^6.7.1","ghpages":"0.0.8","git-rev":"^0.2.1","glob":"^8.0.3","husky":"^0.11.7","jsdom":"^20.0.0","karma":"^6.4.0","karma-chai-shallow-deep-equal":"0.0.4","karma-chrome-launcher":"^3.1.1","karma-coverage":"^2.2.0","karma-env-preprocessor":"^0.1.1","karma-firefox-launcher":"^2.1.2","karma-mocha":"^2.0.1","karma-mocha-reporter":"^2.2.5","karma-sinon-chai":"^2.0.2","karma-webpack":"^5.0.0","markserv":"github:sukima/markserv#feature/fix-broken-websoketio-link","mocha":"^10.0.0","replace-in-file":"^2.5.3","semistandard":"^9.0.0","shelljs":"^0.7.7","shx":"^0.2.2","sinon":"<12.0.0","sinon-chai":"^3.7.0","snazzy":"^5.0.0","style-loader":"^3.3.1","too-wordy":"ngokevin/too-wordy","webpack":"^5.73.0","webpack-cli":"^4.10.0","webpack-dev-server":"^4.11.0","webpack-merge":"^5.8.0","write-good":"^1.0.8"},"link":true,"semistandard":{"ignore":["build/**","dist/**","examples/**/shaders/*.js","**/vendor/**"]},"keywords":["3d","aframe","cardboard","components","oculus","three","three.js","rift","vive","vr","quest","meta","web-components","webvr","webxr"],"engines":{"node":">= 4.6.0","npm":">= 2.15.9"}}');
+module.exports = JSON.parse('{"name":"aframe","version":"1.4.2","description":"A web framework for building virtual reality experiences.","homepage":"https://aframe.io/","main":"dist/aframe-master.js","scripts":{"dev":"cross-env INSPECTOR_VERSION=dev webpack serve --port 8080","dist":"node scripts/updateVersionLog.js && npm run dist:min && npm run dist:max","dist:max":"webpack --config webpack.config.js","dist:min":"webpack --config webpack.prod.config.js","docs":"markserv --dir docs --port 9001","preghpages":"node ./scripts/preghpages.js","ghpages":"ghpages -p gh-pages/","lint":"semistandard -v | snazzy","lint:fix":"semistandard --fix","precommit":"npm run lint","prepush":"node scripts/testOnlyCheck.js","prerelease":"node scripts/release.js 1.4.1 1.4.2","start":"npm run dev","start:https":"npm run dev -- --server-type https","test":"karma start ./tests/karma.conf.js","test:docs":"node scripts/docsLint.js","test:firefox":"npm test -- --browsers Firefox","test:chrome":"npm test -- --browsers Chrome","test:nobrowser":"NO_BROWSER=true npm test","test:node":"mocha --ui tdd tests/node"},"repository":"aframevr/aframe","license":"MIT","files":["dist/*","docs/**/*","src/**/*","vendor/**/*"],"dependencies":{"@ungap/custom-elements":"^1.1.0","buffer":"^6.0.3","custom-event-polyfill":"^1.0.6","debug":"ngokevin/debug#noTimestamp","deep-assign":"^2.0.0","load-bmfont":"^1.2.3","object-assign":"^4.0.1","present":"0.0.6","promise-polyfill":"^3.1.0","super-animejs":"^3.1.0","super-three":"^0.147.1","three-bmfont-text":"dmarcos/three-bmfont-text#21d017046216e318362c48abd1a48bddfb6e0733","webvr-polyfill":"^0.10.12"},"devDependencies":{"@babel/core":"^7.17.10","babel-loader":"^8.2.5","babel-plugin-istanbul":"^6.1.1","chai":"^4.3.6","chai-shallow-deep-equal":"^1.4.0","chalk":"^1.1.3","cross-env":"^7.0.3","css-loader":"^6.7.1","ghpages":"0.0.8","git-rev":"^0.2.1","glob":"^8.0.3","husky":"^0.11.7","jsdom":"^20.0.0","karma":"^6.4.0","karma-chai-shallow-deep-equal":"0.0.4","karma-chrome-launcher":"^3.1.1","karma-coverage":"^2.2.0","karma-env-preprocessor":"^0.1.1","karma-firefox-launcher":"^2.1.2","karma-mocha":"^2.0.1","karma-mocha-reporter":"^2.2.5","karma-sinon-chai":"^2.0.2","karma-webpack":"^5.0.0","markserv":"^1.17.4","mocha":"^10.0.0","replace-in-file":"^2.5.3","semistandard":"^9.0.0","shelljs":"^0.7.7","shx":"^0.2.2","sinon":"<12.0.0","sinon-chai":"^3.7.0","snazzy":"^5.0.0","style-loader":"^3.3.1","too-wordy":"^0.3.4","webpack":"^5.73.0","webpack-cli":"^4.10.0","webpack-dev-server":"^4.11.0","webpack-merge":"^5.8.0","write-good":"^1.0.8"},"link":true,"semistandard":{"ignore":["build/**","dist/**","examples/**/shaders/*.js","**/vendor/**"]},"keywords":["3d","aframe","cardboard","components","oculus","three","three.js","rift","vive","vr","quest","meta","web-components","webvr","webxr"],"engines":{"node":">= 4.6.0","npm":">= 2.15.9"}}');
 
 /***/ })
 
