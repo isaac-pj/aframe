@@ -12056,6 +12056,9 @@ module.exports.Component = registerComponent('animation', {
     this.animationIsPlaying = true;
     this.stopRelatedAnimations();
     this.el.emit('animationbegin', this.eventDetail, false);
+    if (this.id) {
+      this.el.emit('animationbegin__' + this.id, this.eventDetail, false);
+    }
   },
   pauseAnimation: function () {
     this.animationIsPlaying = false;
@@ -30184,7 +30187,7 @@ __webpack_require__(/*! ./core/a-mixin */ "./src/core/a-mixin.js");
 // Extras.
 __webpack_require__(/*! ./extras/components/ */ "./src/extras/components/index.js");
 __webpack_require__(/*! ./extras/primitives/ */ "./src/extras/primitives/index.js");
-console.log('A-Frame Version: 1.4.2 (Date 2023-04-22, Commit #4e521f1f)');
+console.log('A-Frame Version: 1.4.2 (Date 2023-05-30, Commit #7b4ba0c4)');
 console.log('THREE Version (https://github.com/supermedium/three.js):', pkg.dependencies['super-three']);
 console.log('WebVR Polyfill Version:', pkg.dependencies['webvr-polyfill']);
 module.exports = window.AFRAME = {
