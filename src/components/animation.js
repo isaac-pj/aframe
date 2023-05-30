@@ -194,6 +194,10 @@ module.exports.Component = registerComponent('animation', {
     this.animationIsPlaying = true;
     this.stopRelatedAnimations();
     this.el.emit('animationbegin', this.eventDetail, false);
+
+    if (this.id) {
+      this.el.emit('animationbegin__' + this.id, this.eventDetail, false);
+    }
   },
 
   pauseAnimation: function () {
